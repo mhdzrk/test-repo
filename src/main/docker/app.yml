@@ -1,0 +1,35 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
+services:
+  session-app:
+    image: session
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://session-postgresql:5432/session
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://session-postgresql:5432/session
+      - JHIPSTER_CACHE_MEMCACHED_SERVERS=session-memcached:11211
+      - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:8080:8080
+  session-postgresql:
+    image: postgres:13.3
+    # volumes:
+    #   - ~/volumes/jhipster/session/postgresql/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=session
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:5432:5432
+  session-memcached:
+    image: memcached:1.6.9-alpine
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:11211:11211
